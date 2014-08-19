@@ -14,13 +14,27 @@ func sumMultiples(start, end, mul int) int {
 	return (mul * sum * (sum + 1)) >> 1
 }
 
-// calculate the sum of the numbers multiples of 'mul' between 'start' and 'end'
 func sumMultiplesNaive(start, end, mul int) int {
 	var s int = 0
-	for i := s; i < end; i++ {
+	for i := start; i < end; i++ {
 		if i%mul == 0 {
 			s += i
 		}
+	}
+	return s
+}
+
+// calculate the sum of the numbers multiples of 'mul' between 'start' and 'end'
+// it is not the worst possible solution since it skips invalid numbers
+func sumMultiplesSemiNaive(start, end, mul int) int {
+	var s int = 0
+	if mul > start {
+		start = mul
+	} else {
+		start = start + (start % mul)
+	}
+	for i := start; i < end; i = i + mul {
+		s += i
 	}
 	return s
 }
@@ -31,7 +45,7 @@ func solve_naive(start, end int) int {
 	/////////////////////////////////////////
 
 	var s int = 0
-	for i := s; i < end; i++ {
+	for i := start; i < end; i++ {
 		if i%3 == 0 || i%5 == 0 {
 			s += i
 		}
@@ -55,6 +69,33 @@ func solve_naive_goroutines(start, end int) int {
 	}()
 
 	return -sumMultiplesNaive(start, end, 15) + <-resCh + <-resCh
+}
+
+func solve_seminaive(start, end int) int {
+	//////////// TIMING /////////////////////
+	defer timeStop(time.Now(), "Semi Naive solution")
+	/////////////////////////////////////////
+	return -sumMultiplesSemiNaive(start, end, 15) +
+		sumMultiplesSemiNaive(start, end, 3) +
+		sumMultiplesSemiNaive(start, end, 5)
+}
+
+func solve_seminaive_goroutines(start, end int) int {
+	//////////// TIMING /////////////////////
+	defer timeStop(time.Now(), "Semi Naive solution with goroutines")
+	/////////////////////////////////////////
+
+	resCh := make(chan int, 2)
+
+	go func() {
+		resCh <- sumMultiplesSemiNaive(start, end, 3)
+	}()
+
+	go func() {
+		resCh <- sumMultiplesSemiNaive(start, end, 5)
+	}()
+
+	return -sumMultiplesSemiNaive(start, end, 15) + <-resCh + <-resCh
 }
 
 func solve_optimized(start, end int) int {
@@ -129,6 +170,8 @@ func main() {
 
 	fmt.Printf("Result: %d\n", solve_naive(s, e))
 	fmt.Printf("Result: %d\n", solve_naive_goroutines(s, e))
+	fmt.Printf("Result: %d\n", solve_seminaive(s, e))
+	fmt.Printf("Result: %d\n", solve_seminaive_goroutines(s, e))
 	fmt.Printf("Result: %d\n", solve_optimized(s, e))
 	fmt.Printf("Result: %d\n", solve_optimized_goroutines(s, e))
 	fmt.Printf("Result: %d\n", solve_optimized_goroutines2(s, e))
