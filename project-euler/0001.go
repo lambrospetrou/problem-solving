@@ -8,7 +8,7 @@ import (
 
 // calculate the sum of the numbers multiples of 'mul' between 'start' and 'end'
 // it uses the Summation formula Sum(i) for range ['start', 'end')
-// which is the same as (end * (end-1)) / 2
+// which is the same as (end * (end+1)) / 2
 func sumMultiples(start, end, mul int) int {
 	sum := (end - 1) / mul
 	return (mul * sum * (sum + 1)) >> 1
