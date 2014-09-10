@@ -166,7 +166,7 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	var s int = 1
-	var e int = 1000
+	var e int = 9999999
 
 	fmt.Printf("Result: %d\n", solve_naive(s, e))
 	fmt.Printf("Result: %d\n", solve_naive_goroutines(s, e))
