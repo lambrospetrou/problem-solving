@@ -12,16 +12,18 @@ public class circlematrix {
         public int x,y;
     }
 
+    /**
+     * Calculates the next position on the matrix that we should put a number.
+     * It is like an iterator that moves in spiral order starting from 0,0.
+     */
     public static class PointCalc {
         Point p;
-        int N;
-        int currentCircle = 0;
-        int currentCircleMoves = 0;
+        int N, dirX = 1, dirY = 0, currentCircle = 0, currentCircleMoves = 0;
 
+        // this determines if the next step of X or Y should increment,
+        // decrement or stay the same based on the dirX or dirY.
+        // it simulates the clockwise order - spiral order
         int dirs[] = new int[]{0,1,0,-1};
-
-        int dirX = 1;
-        int dirY = 0;
 
         public PointCalc(int N) {
             this.N = N;
@@ -33,6 +35,7 @@ public class circlematrix {
         // calculate the next position
         Point next() {
             if (currentCircleMoves == (2*N + 2*(N-2))) {
+                // we finished the current circle
                 currentCircleMoves = 0;
                 N -= 2;
                 currentCircle++;
