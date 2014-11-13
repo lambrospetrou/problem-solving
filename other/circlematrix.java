@@ -26,7 +26,7 @@ public class circlematrix {
      */
     public static class PointCalc {
         Point prev;
-        int N, n, dirX = 1, dirY = 0, currentCircle = 0;
+        int n, dirX = 1, dirY = 0, currentCircle = 0;
 
         // this determines if the next step of X or Y should increment,
         // decrement or stay the same based on the dirX or dirY.
@@ -34,7 +34,7 @@ public class circlematrix {
         int dirs[] = new int[]{0,1,0,-1};
 
         public PointCalc(int N) {
-            this.N = N; n = N;
+            this.n = N;
             prev = new Point();
         }
 
