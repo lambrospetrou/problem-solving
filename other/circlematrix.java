@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * "Write a function that for a given Integer N > 0, prints a matrix N x N
  * size whom the values are increasing in a spiral order."
@@ -25,7 +27,7 @@ public class circlematrix {
      * It is like an iterator that moves in spiral order starting from 0,0.
      */
     public static class PointCalc {
-        Point prev;
+        Point prev, cur;
         int n, dirX = 1, dirY = 0, currentCircle = 0;
 
         // this determines if the next step of X or Y should increment,
@@ -36,6 +38,7 @@ public class circlematrix {
         public PointCalc(int N) {
             this.n = N;
             prev = new Point();
+            cur = new Point();
         }
 
         boolean isInValidCell (int x, int y) {
@@ -56,7 +59,8 @@ public class circlematrix {
          * After invocation the Point prev holds the position for the next call.
          */
         Point next() {
-            Point p = new Point(prev.x, prev.y);
+            cur.x = prev.x;
+            cur.y = prev.y;
             // if this is the last one of the current circle
             //  move to the next circle inside the spiral
             // we check if the cell above the current one is the origin
@@ -75,7 +79,7 @@ public class circlematrix {
                 prev.x = prev.x + dirs[dirX];
                 prev.y = prev.y + dirs[dirY];
             }
-            return p;
+            return cur;
         }
     }
 
@@ -86,20 +90,129 @@ public class circlematrix {
     public static int[][] solve(int N) {
         PointCalc pc = new PointCalc(N);
         int NN[][] = new int[N][N];
+        Point p;
         for (int i=0; i<N*N; i++) {
-            Point p = pc.next();
+            p = pc.next();
             NN[p.y][p.x] = i;
         }
         return NN;
     }
+
+    ////////////// END OF SOLUTION 1 ///////////////
+
+    ///////////// SOLUTION 2 ///////////////////
+
+    static enum Side {
+        Top, Right, Down, Left
+    }
+
+    public static void stepRight(Side side, Point c) {
+        switch (side) {
+            case Top:
+                // top side - go down
+                c.y += 1;
+                break;
+            case Right:
+                // right side - go left
+                c.x -= 1;
+                break;
+            case Down:
+                // down side - go up
+                c.y -= 1;
+                break;
+            case Left:
+                // left side - go right
+                c.x += 1;
+                break;
+        }
+    }
+
+    public static Side findSide(int x, int y, int currentCircle, int N) {
+        // top side
+        if (y == currentCircle) {
+            return Side.Top;
+        }
+        // right side
+        if (x == N - currentCircle - 1) {
+            return Side.Right;
+        }
+        // bottom side
+        if (y == N-currentCircle - 1) {
+            return Side.Down;
+        }
+        // left side
+        return Side.Left;
+    }
+
+    public static int[][] solve2(int N) {
+        int NN[][] = new int[N][N];
+        for (int i =0; i<N; i++) {
+            Arrays.fill(NN[i], -1);
+        }
+        int counter = 0;
+        Point c = new Point();
+        int total = N*N;
+        int currentCircle = 0;
+        while(counter < total) {
+            NN[c.y][c.x] = counter;
+            counter++;
+            // find the side we are
+            Side side = findSide(c.x, c.y, currentCircle, N);
+            switch (side) {
+                case Top:
+                    // top side - try go right
+                    if (c.x+1 < N && NN[c.y][c.x+1] == -1) {
+                        c.x = c.x + 1;
+                        continue;
+                    }
+                    break;
+                case Right:
+                    // right side - try go down
+                    if (c.y + 1 < N && NN[c.y+1][c.x] == -1) {
+                        c.y = c.y + 1;
+                        continue;
+                    }
+                    break;
+                case Down:
+                    // down side - try go left
+                    if (c.x - 1 >= 0 && NN[c.y][c.x-1] == -1) {
+                        c.x = c.x -  1;
+                        continue;
+                    }
+                    break;
+                case Left:
+                    // left side - try go up
+                    if (c.y - 1 >= 0 && NN[c.y-1][c.x] == -1) {
+                        c.y = c.y -  1;
+                        continue;
+                    } else {
+                        currentCircle++;
+                    }
+                    break;
+            }
+            stepRight(side, c);
+        }
+        return NN;
+    }
+
+    ///////////// END OF SOLUTION 2 ///////////////////////
 
     /**
      * This is just to test the solution.
      * @param args
      */
     public static void main (String[] args) {
-        int N = 5;
+        int N = 20;
+
+        long start = System.nanoTime();
         int[][] NN = solve(N);
+        long end = System.nanoTime();
+
+        long start2 = System.nanoTime();
+        int[][] NN2 = solve2(N);
+        long end2 = System.nanoTime();
+
+        System.out.printf("A:%d B:%d\n", (end-start), (end2-start2));
 
         for (int i=0; i<N; i++) {
             for (int j=0; j<N; j++) {
@@ -107,5 +220,13 @@ public class circlematrix {
             }
             System.out.println();
         }
+
+        for (int i=0; i<N; i++) {
+            for (int j=0; j<N; j++) {
+                System.out.print(NN2[i][j] + " ");
+            }
+            System.out.println();
+        }
+
     }
 }
