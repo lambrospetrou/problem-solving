@@ -161,28 +161,28 @@ public class circlematrix {
             switch (side) {
                 case Top:
                     // top side - try go right
-                    if (c.x+1 < N && NN[c.y][c.x+1] == -1) {
+                    if (c.x+1 < N - currentCircle) {
                         c.x = c.x + 1;
                         continue;
                     }
                     break;
                 case Right:
                     // right side - try go down
-                    if (c.y + 1 < N && NN[c.y+1][c.x] == -1) {
+                    if (c.y + 1 < N - currentCircle) {
                         c.y = c.y + 1;
                         continue;
                     }
                     break;
                 case Down:
                     // down side - try go left
-                    if (c.x - 1 >= 0 && NN[c.y][c.x-1] == -1) {
+                    if (c.x - 1 >= currentCircle ) {
                         c.x = c.x -  1;
                         continue;
                     }
                     break;
                 case Left:
                     // left side - try go up
-                    if (c.y - 1 >= 0 && NN[c.y-1][c.x] == -1) {
+                    if (c.y - 1 > currentCircle) {
                         c.y = c.y -  1;
                         continue;
                     } else {
@@ -202,7 +202,7 @@ public class circlematrix {
      * @param args
      */
     public static void main (String[] args) {
-        int N = 20;
+        int N = 4;
 
         long start = System.nanoTime();
         int[][] NN = solve(N);
