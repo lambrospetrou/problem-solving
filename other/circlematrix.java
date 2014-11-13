@@ -41,6 +41,13 @@ public class circlematrix {
             prev.y = 0;
         }
 
+        boolean isInValidCell (int x, int y) {
+            // we are at the right or bottom edge
+            return x == currentCircle + n || y == currentCircle + n
+                    // we are at the left or top edge
+                    || x < currentCircle || y < currentCircle;
+        }
+
         // calculate the next position
         Point next() {
             if (N == 1) {
@@ -58,8 +65,7 @@ public class circlematrix {
                 prev.y = currentCircle;
             } else {
                 // check if we have a valid cell by forwarding
-                if ((prev.x + dirs[dirX]) == currentCircle + n || (prev.y + dirs[dirY]) == currentCircle + n
-                        || (prev.x + dirs[dirX]) < currentCircle || (prev.y + dirs[dirY]) < currentCircle) {
+                if (isInValidCell(prev.x + dirs[dirX], prev.y + dirs[dirY])) {
                     // next direction
                     dirX = (dirX + 1) % dirs.length;
                     dirY = (dirY + 1) % dirs.length;
