@@ -26,7 +26,7 @@ public class circlematrix {
      */
     public static class PointCalc {
         Point prev;
-        int N, n, dirX = 1, dirY = 0, currentCircle = 0, currentCircleMoves = 0, totalCircleMoves;
+        int N, n, dirX = 1, dirY = 0, currentCircle = 0;
 
         // this determines if the next step of X or Y should increment,
         // decrement or stay the same based on the dirX or dirY.
@@ -34,12 +34,8 @@ public class circlematrix {
         int dirs[] = new int[]{0,1,0,-1};
 
         public PointCalc(int N) {
-            this.N = N;
-            n = N;
-            totalCircleMoves = (n<<1) + ((n-2)<<1);
+            this.N = N; n = N;
             prev = new Point();
-            prev.x = 0;
-            prev.y = 0;
         }
 
         boolean isInValidCell (int x, int y) {
@@ -49,6 +45,10 @@ public class circlematrix {
                     || y < currentCircle || x < currentCircle;
         }
 
+        boolean isAtOrigin(int x, int y) {
+            return x == y && y == currentCircle;
+        }
+
         /**
          * Returns the next position of the spiral iteration.
          * The invariant of the function is that before the invocation
@@ -56,17 +56,12 @@ public class circlematrix {
          * After invocation the Point prev holds the position for the next call.
          */
         Point next() {
-            if (N == 1) {
-                return new Point(0,0);
-            }
             Point p = new Point(prev.x, prev.y);
-            currentCircleMoves++;
-            // if this is the last one of the current circle move
-            // to the next circle inside the spiral
-            if (currentCircleMoves == totalCircleMoves) {
-                currentCircleMoves = 0;
+            // if this is the last one of the current circle
+            //  move to the next circle inside the spiral
+            // we check if the cell above the current one is the origin
+            if (isAtOrigin(prev.x, prev.y-1)) {
                 n -= 2;
-                totalCircleMoves = (n<<1) + ((n-2)<<1);
                 currentCircle++;
                 prev.x = currentCircle;
                 prev.y = currentCircle;
