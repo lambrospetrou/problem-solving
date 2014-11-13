@@ -26,7 +26,7 @@ public class circlematrix {
      */
     public static class PointCalc {
         Point prev;
-        int N, n, dirX = 1, dirY = 0, currentCircle = 0, currentCircleMoves = 0;
+        int N, n, dirX = 1, dirY = 0, currentCircle = 0, currentCircleMoves = 0, totalCircleMoves;
 
         // this determines if the next step of X or Y should increment,
         // decrement or stay the same based on the dirX or dirY.
@@ -36,6 +36,7 @@ public class circlematrix {
         public PointCalc(int N) {
             this.N = N;
             n = N;
+            totalCircleMoves = (n<<1) + ((n-2)<<1);
             prev = new Point();
             prev.x = 0;
             prev.y = 0;
@@ -45,10 +46,15 @@ public class circlematrix {
             // we are at the right or bottom edge
             return x == currentCircle + n || y == currentCircle + n
                     // we are at the left or top edge
-                    || x < currentCircle || y < currentCircle;
+                    || y < currentCircle || x < currentCircle;
         }
 
-        // calculate the next position
+        /**
+         * Returns the next position of the spiral iteration.
+         * The invariant of the function is that before the invocation
+         * Point prev holds the next position to return.
+         * After invocation the Point prev holds the position for the next call.
+         */
         Point next() {
             if (N == 1) {
                 return new Point(0,0);
@@ -57,9 +63,10 @@ public class circlematrix {
             currentCircleMoves++;
             // if this is the last one of the current circle move
             // to the next circle inside the spiral
-            if (currentCircleMoves == (2*n + 2*(n-2))) {
+            if (currentCircleMoves == totalCircleMoves) {
                 currentCircleMoves = 0;
                 n -= 2;
+                totalCircleMoves = (n<<1) + ((n-2)<<1);
                 currentCircle++;
                 prev.x = currentCircle;
                 prev.y = currentCircle;
