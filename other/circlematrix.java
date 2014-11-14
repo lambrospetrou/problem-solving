@@ -106,42 +106,26 @@ public class circlematrix {
         Top, Right, Down, Left
     }
 
-    public static void stepRight(Side side, Point c) {
+    public static Side stepRight(Side side, Point c) {
         switch (side) {
             case Top:
                 // top side - go down
                 c.y += 1;
-                break;
+                return Side.Right;
             case Right:
                 // right side - go left
                 c.x -= 1;
-                break;
+                return Side.Down;
             case Down:
                 // down side - go up
                 c.y -= 1;
-                break;
+                return Side.Left;
             case Left:
                 // left side - go right
                 c.x += 1;
-                break;
+                return Side.Top;
         }
-    }
-
-    public static Side findSide(int x, int y, int currentCircle, int N) {
-        // top side
-        if (y == currentCircle) {
-            return Side.Top;
-        }
-        // right side
-        if (x == N - currentCircle - 1) {
-            return Side.Right;
-        }
-        // bottom side
-        if (y == N-currentCircle - 1) {
-            return Side.Down;
-        }
-        // left side
-        return Side.Left;
+        throw new RuntimeException("Invalid side given");
     }
 
     public static int[][] solve2(int N) {
@@ -153,33 +137,33 @@ public class circlematrix {
         Point c = new Point();
         int total = N*N;
         int currentCircle = 0;
+        Side curSide = Side.Top;
         while(counter < total) {
             NN[c.y][c.x] = counter;
             counter++;
             // find the side we are
-            Side side = findSide(c.x, c.y, currentCircle, N);
-            switch (side) {
+            switch (curSide) {
                 case Top:
                     // top side - try go right
                     if (c.x+1 < N - currentCircle) {
                         c.x = c.x + 1;
                         continue;
                     }
-					break;
+                    break;
                 case Right:
                     // right side - try go down
                     if (c.y + 1 < N - currentCircle) {
                         c.y = c.y + 1;
                         continue;
                     }
-					break;
+                    break;
                 case Down:
                     // down side - try go left
                     if (c.x - 1 >= currentCircle ) {
                         c.x = c.x -  1;
                         continue;
                     }
-					break;
+                    break;
                 case Left:
                     // left side - try go up
                     if (c.y - 1 > currentCircle) {
@@ -188,9 +172,9 @@ public class circlematrix {
                     } else {
                         currentCircle++;
                     }
-					break;
+                    break;
             }
-            stepRight(side, c);
+            curSide = stepRight(curSide, c);
         }
         return NN;
     }
