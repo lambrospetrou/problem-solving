@@ -165,18 +165,21 @@ public class circlematrix {
                         c.x = c.x + 1;
                         continue;
                     }
+					break;
                 case Right:
                     // right side - try go down
                     if (c.y + 1 < N - currentCircle) {
                         c.y = c.y + 1;
                         continue;
                     }
+					break;
                 case Down:
                     // down side - try go left
                     if (c.x - 1 >= currentCircle ) {
                         c.x = c.x -  1;
                         continue;
                     }
+					break;
                 case Left:
                     // left side - try go up
                     if (c.y - 1 > currentCircle) {
@@ -185,6 +188,7 @@ public class circlematrix {
                     } else {
                         currentCircle++;
                     }
+					break;
             }
             stepRight(side, c);
         }
