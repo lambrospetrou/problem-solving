@@ -32,8 +32,18 @@ func primesConc1(N int, procs int) int {
 	primesFound[2] = 5
 	primesFound[3] = 7
 
-	chPrimes := make(chan int, procs<<3)
-	chNextCandidate := make(chan int, procs)
+	chPrimes := make(chan int, 100)
+	chAllPrimesInserted := make(chan int)
+	chNextCandidate := make(chan int, procs<<4)
+
+	chProcChannels := make(chan bool, procs)
+
+	// candidates generator
+	go func() {
+		for i := 1; ; i++ {
+			chAllPrimesInserted <- i
+		}
+	}()
 
 	primesStored := 4
 
@@ -48,7 +58,13 @@ func primesConc1(N int, procs int) int {
 			case <-done:
 				terminated++
 			case p = <-chPrimes:
+				var clen int = primesStored
 				insertionSort(primesFound, &primesStored, p, N)
+				if clen == N-1 {
+					for i := 0; i < procs; i++ {
+						chProcChannels <- true
+					}
+				}
 			}
 		}
 		allDone <- true
@@ -75,7 +91,9 @@ func primesConc1(N int, procs int) int {
 		}
 	}()
 
-	checkPrime := func(next int) {
+	// returns True if the worker can continue finding more primes
+	// or False if it should exit
+	checkPrime := func(next int) bool {
 		var finished bool = false
 		cPrime := 3
 		nextSqrt := int(math.Sqrt(float64(next)))
@@ -87,7 +105,7 @@ func primesConc1(N int, procs int) int {
 				finished = true
 				break
 			} else if next%cPrime == 0 {
-				return
+				return true
 			}
 		}
 		if finished == false {
@@ -97,31 +115,51 @@ func primesConc1(N int, procs int) int {
 			// and they still haven't added them to the found primes
 			for cPrime <= nextSqrt {
 				if next%cPrime == 0 {
-					return
+					return true
 				}
 				cPrime += 2
 			}
 		}
 		// we have a valid prime number
 		chPrimes <- next
+		np := <-chAllPrimesInserted
+		if np >= N {
+			return false
+		}
+		return true
 	}
 
 	for i := 0; i < procs; i++ {
-		go func() {
+		go func(procChannelFinishedN chan bool) {
+			var seq1, seq2, nextCandidate int
 			for {
-				nextCandidate := <-chNextCandidate
+				// make sure there are primes to find
+				select {
+				case <-procChannelFinishedN:
+					fmt.Println("exiting - notified by main - last candidate:",
+						nextCandidate)
+					done <- true
+					return
+				default:
+					// just proceed
+				}
+
+				nextCandidate = <-chNextCandidate
 				nextCandidate = nextCandidate*6 - 1
 
-				if (primesStored >= N) && (nextCandidate > primesFound[N-1]) {
+				if !checkPrime(nextCandidate) {
+					fmt.Println("exiting", seq1, seq2, nextCandidate)
 					done <- true
-					fmt.Println("exiting: ", nextCandidate)
 					return
 				}
 
-				checkPrime(nextCandidate)
-				checkPrime(nextCandidate + 2)
+				if !checkPrime(nextCandidate + 2) {
+					fmt.Println("exiting", seq1, seq2, nextCandidate+2)
+					done <- true
+					return
+				}
 			}
-		}()
+		}(chProcChannels)
 	}
 
 	gatherPrimes()
