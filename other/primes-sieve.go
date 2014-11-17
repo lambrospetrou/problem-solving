@@ -33,7 +33,7 @@ func primesConc1(N int, procs int) int {
 	primesFound[3] = 7
 
 	chPrimes := make(chan int, 100)
-	chAllPrimesInserted := make(chan int)
+	chAllPrimesInserted := make(chan int, procs<<2)
 	chNextCandidate := make(chan int, procs<<4)
 
 	chProcChannels := make(chan bool, procs)
@@ -93,7 +93,7 @@ func primesConc1(N int, procs int) int {
 
 	// returns True if the worker can continue finding more primes
 	// or False if it should exit
-	checkPrime := func(next int) bool {
+	checkPrime := func(next int) int {
 		var finished bool = false
 		cPrime := 3
 		nextSqrt := int(math.Sqrt(float64(next)))
@@ -105,7 +105,7 @@ func primesConc1(N int, procs int) int {
 				finished = true
 				break
 			} else if next%cPrime == 0 {
-				return true
+				return -1
 			}
 		}
 		if finished == false {
@@ -115,23 +115,19 @@ func primesConc1(N int, procs int) int {
 			// and they still haven't added them to the found primes
 			for cPrime <= nextSqrt {
 				if next%cPrime == 0 {
-					return true
+					return -1
 				}
 				cPrime += 2
 			}
 		}
 		// we have a valid prime number
 		chPrimes <- next
-		np := <-chAllPrimesInserted
-		if np >= N {
-			return false
-		}
-		return true
+		return <-chAllPrimesInserted
 	}
 
 	for i := 0; i < procs; i++ {
 		go func(procChannelFinishedN chan bool) {
-			var seq1, seq2, nextCandidate int
+			var seq1, nextCandidate int
 			for {
 				// make sure there are primes to find
 				select {
@@ -147,14 +143,14 @@ func primesConc1(N int, procs int) int {
 				nextCandidate = <-chNextCandidate
 				nextCandidate = nextCandidate*6 - 1
 
-				if !checkPrime(nextCandidate) {
-					fmt.Println("exiting", seq1, seq2, nextCandidate)
+				if seq1 = checkPrime(nextCandidate); seq1 >= N {
+					fmt.Println("exiting", seq1, nextCandidate)
 					done <- true
 					return
 				}
 
-				if !checkPrime(nextCandidate + 2) {
-					fmt.Println("exiting", seq1, seq2, nextCandidate+2)
+				if seq1 = checkPrime(nextCandidate + 2); seq1 >= N {
+					fmt.Println("exiting", seq1, nextCandidate+2)
 					done <- true
 					return
 				}
