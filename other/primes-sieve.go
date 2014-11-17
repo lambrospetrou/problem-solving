@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+func insertionSort(arr []int, length *int, elem int, N int) {
+	i := *length - 1
+	for arr[i] > elem {
+		arr[i+1] = arr[i]
+		i--
+	}
+	if i < N-1 {
+		arr[i+1] = elem
+		if *length < N {
+			*length += 1
+		}
+	}
+}
+
 func primesConc1(N int, procs int) int {
 	defer timeStop(time.Now(), "Primes Concurrent 1 finished")
 
@@ -18,7 +32,7 @@ func primesConc1(N int, procs int) int {
 	primesFound[2] = 5
 	primesFound[3] = 7
 
-	chPrimes := make(chan int, 1000)
+	chPrimes := make(chan int, procs<<3)
 	chNextCandidate := make(chan int, procs)
 
 	primesStored := 4
@@ -34,43 +48,23 @@ func primesConc1(N int, procs int) int {
 			case <-done:
 				terminated++
 			case p = <-chPrimes:
-				i := primesStored - 1
-				for primesFound[i] > p {
-					primesFound[i+1] = primesFound[i]
-					i--
-				}
-				if i < N-1 {
-					primesFound[i+1] = p
-					//fmt.Println("inserted: ", i+1, p)
-					if primesStored < N {
-						primesStored++
-					}
-				}
+				insertionSort(primesFound, &primesStored, p, N)
 			}
 		}
 		allDone <- true
-		fmt.Println("all exited")
+		fmt.Println("all workers exited")
+		// all workers finished so just check their remaining results
 		for {
 			select {
 			case p = <-chPrimes:
-				i := primesStored - 1
-				for primesFound[i] > p {
-					primesFound[i+1] = primesFound[i]
-					i--
-				}
-				if i < N-1 {
-					primesFound[i+1] = p
-					//fmt.Println("inserted 2: ", i+1, p)
-					if primesStored < N {
-						primesStored++
-					}
-				}
+				insertionSort(primesFound, &primesStored, p, N)
 			default:
 				return
 			}
 		}
 	}
 
+	// candidates generator
 	go func() {
 		for i := 2; ; i++ {
 			select {
@@ -86,29 +80,30 @@ func primesConc1(N int, procs int) int {
 		cPrime := 3
 		nextSqrt := int(math.Sqrt(float64(next)))
 		//fmt.Println("checking: ", nextSqrt, next)
+		// check for prime validity against the found primes so far
 		for j := 0; j < primesStored; j++ {
 			cPrime = primesFound[j]
-			if next%cPrime == 0 {
-				return
-			}
 			if cPrime > nextSqrt {
 				finished = true
 				break
+			} else if next%cPrime == 0 {
+				return
 			}
 		}
 		if finished == false {
+			// now we have to check for possible divisors
+			// larger than the primes we found so far but less than SQRT
+			// of our num since other workers might be checking them
+			// and they still haven't added them to the found primes
 			for cPrime <= nextSqrt {
-				//fmt.Println(cPrime)
 				if next%cPrime == 0 {
 					return
 				}
 				cPrime += 2
 			}
 		}
-		if cPrime > nextSqrt {
-			//fmt.Println("found prime: ", next)
-			chPrimes <- next
-		}
+		// we have a valid prime number
+		chPrimes <- next
 	}
 
 	for i := 0; i < procs; i++ {
