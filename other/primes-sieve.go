@@ -18,8 +18,8 @@ func primesConc1(N int, procs int) int {
 	primesFound[2] = 5
 	primesFound[3] = 7
 
-	chPrimes := make(chan int, 100)
-	chNextCandidate := make(chan int, 20)
+	chPrimes := make(chan int, 1000)
+	chNextCandidate := make(chan int, procs)
 
 	primesStored := 4
 
@@ -147,11 +147,11 @@ func primesSerial(N int) int {
 	for nextSlot < N {
 		cPrime := 0
 		nextSqrt := int(math.Sqrt(float64(nextCandidate)))
-		for i := 0; i < nextSlot; i++ {
+		cPrime = primesFound[0]
+		i := 1
+		for cPrime <= nextSqrt && nextCandidate%cPrime != 0 {
 			cPrime = primesFound[i]
-			if cPrime > nextSqrt || nextCandidate%cPrime == 0 {
-				break
-			}
+			i = i + 1
 		}
 		if cPrime > nextSqrt {
 			primesFound[nextSlot] = nextCandidate
