@@ -148,10 +148,8 @@ func primesSerial(N int) int {
 		cPrime := 0
 		nextSqrt := int(math.Sqrt(float64(nextCandidate)))
 		cPrime = primesFound[0]
-		i := 1
-		for cPrime <= nextSqrt && nextCandidate%cPrime != 0 {
+		for i := 1; cPrime <= nextSqrt && nextCandidate%cPrime != 0; i++ {
 			cPrime = primesFound[i]
-			i = i + 1
 		}
 		if cPrime > nextSqrt {
 			primesFound[nextSlot] = nextCandidate
