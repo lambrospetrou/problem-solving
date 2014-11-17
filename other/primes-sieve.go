@@ -32,7 +32,8 @@ func primesConc1(N int, procs int) int {
 	primesFound[2] = 5
 	primesFound[3] = 7
 
-	chPrimes := make(chan int, 100)
+	// receives all the valid primes from the workers
+	chPrimes := make(chan int, procs<<2)
 	chAllPrimesInserted := make(chan int, procs<<2)
 	chNextCandidate := make(chan int, procs<<4)
 
