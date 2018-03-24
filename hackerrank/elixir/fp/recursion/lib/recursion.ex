@@ -54,7 +54,7 @@ defmodule Recursion.Pascal do
       Enum.zip(previous, Enum.drop(previous, 1))
       |> Enum.map(fn {a, b} -> a + b end)
 
-    row = [1 | summed] ++ [1]
+    row = [1 | summed ++ [1]]
 
     [row | top]
   end
