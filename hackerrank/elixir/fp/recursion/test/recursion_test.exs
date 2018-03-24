@@ -26,6 +26,7 @@ defmodule RecursionTest do
   	assert Fibonacci.fib(11) == 55
   	assert Fibonacci.fib(12) == 89
   	assert Fibonacci.fib(13) == 144
-  	assert Fibonacci.fib(40) == 102_334_155
+  	assert Fibonacci.fib(14) == 233
+  	assert Fibonacci.fib(15) == 377
   end
 end
