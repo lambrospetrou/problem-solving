@@ -10,21 +10,19 @@ defmodule Recursion.Gcd do
   end
 end
 
+defmodule Recursion.Fibonacci do
+  def main() do
+    n = IO.gets("") |> String.trim |> String.to_integer
+    fib(n) |> IO.puts
+  end
+
+  def fib(1), do: 0
+  def fib(2), do: 1
+  def fib(n), do: fib(n-1) + fib(n-2)
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Recursion.hello
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end
