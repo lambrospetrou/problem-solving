@@ -40,17 +40,17 @@ defmodule RecursionTest do
 
   test "Sierpinski triangle calculation" do
     alias Recursion.Sierpinski
-    assert Sierpinski.triangles(32, 63, 1) == [[{0, 31}, {31, 0}, {31, 62}]]
+    assert Sierpinski.triangles(32, 63, 0) == [[{0, 31}, {31, 0}, {31, 62}]]
 
-    assert Sierpinski.triangles(32, 63, 2) == [
+    assert Sierpinski.triangles(32, 63, 1) == [
              [{0, 31}, {15, 16}, {15, 46}],
              [{16, 15}, {31, 0}, {31, 30}],
              [{16, 47}, {31, 32}, {31, 62}]
            ]
 
-    assert Sierpinski.triangles(6, 11, 1) == [[{0, 5}, {5, 0}, {5, 10}]]
+    assert Sierpinski.triangles(6, 11, 0) == [[{0, 5}, {5, 0}, {5, 10}]]
 
-    assert Sierpinski.triangles(6, 11, 2) == [
+    assert Sierpinski.triangles(6, 11, 1) == [
              [{0, 5}, {2, 3}, {2, 7}],
              [{3, 2}, {5, 0}, {5, 4}],
              [{3, 8}, {5, 6}, {5, 10}]

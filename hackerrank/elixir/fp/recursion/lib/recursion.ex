@@ -64,17 +64,46 @@ defmodule Recursion.Sierpinski do
   def main() do
     n = IO.gets("") |> String.trim() |> String.to_integer()
 
-    triangles(32, 63, n)
-    |> Enum.reverse()
-    |> Enum.map(fn line ->
-      Enum.join(line, " ") |> IO.puts()
-    end)
+    draw(32, 63, triangles(32, 63, n))
+  end
+
+  def draw(r, c, trs) do
+    for row <- 0..(r - 1) do
+      0..(c - 1)
+      |> Enum.map(fn col -> draw_cell(row, col, trs) end)
+      |> Enum.join("")
+      |> IO.puts()
+    end
+  end
+
+  def draw_cell(row, col, trs) do
+    trs
+    |> Enum.any?(fn tr -> inside?(row, col, tr) end)
+    |> (fn ace ->
+          if ace == true do
+            "1"
+          else
+            "_"
+          end
+        end).()
+  end
+
+  # https://stackoverflow.com/a/2049593
+  defp sign({y1, x1}, {y2, x2}, {y3, x3}) do
+    (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3)
+  end
+
+  defp inside?(r, c, [{r, c}, {r, c}, {r, c}]), do: true
+  defp inside?(r, c, [{x, y}, {x, y}, {x, y}]) when r != x or c != y, do: false
+
+  defp inside?(r, c, [p1, p2, p3]) do
+    sign({r, c}, p1, p2) <= 0.0 && sign({r, c}, p2, p3) <= 0.0 && sign({r, c}, p3, p1) <= 0.0
   end
 
   @doc """
   Returns a list of the points for each triangle: [{top}, {bottom_left}, {bottom_right}]
   """
-  def triangles(r, c, 1), do: [[{0, Integer.floor_div(c, 2)}, {r - 1, 0}, {r - 1, c - 1}]]
+  def triangles(r, c, 0), do: [[{0, Integer.floor_div(c, 2)}, {r - 1, 0}, {r - 1, c - 1}]]
 
   def triangles(r, c, n) do
     triangles(r, c, n - 1)
