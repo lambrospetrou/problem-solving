@@ -37,4 +37,23 @@ defmodule RecursionTest do
     assert Pascal.triangle(3) == [[1, 2, 1], [1, 1], [1]]
     assert Pascal.triangle(4) == [[1, 3, 3, 1], [1, 2, 1], [1, 1], [1]]
   end
+
+  test "Sierpinski triangle calculation" do
+    alias Recursion.Sierpinski
+    assert Sierpinski.triangles(32, 63, 1) == [[{0, 31}, {31, 0}, {31, 62}]]
+
+    assert Sierpinski.triangles(32, 63, 2) == [
+             [{0, 31}, {15, 16}, {15, 46}],
+             [{16, 15}, {31, 0}, {31, 30}],
+             [{16, 47}, {31, 32}, {31, 62}]
+           ]
+
+    assert Sierpinski.triangles(6, 11, 1) == [[{0, 5}, {5, 0}, {5, 10}]]
+
+    assert Sierpinski.triangles(6, 11, 2) == [
+             [{0, 5}, {2, 3}, {2, 7}],
+             [{3, 2}, {5, 0}, {5, 4}],
+             [{3, 8}, {5, 6}, {5, 10}]
+           ]
+  end
 end
