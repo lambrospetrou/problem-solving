@@ -140,7 +140,12 @@ defmodule Recursion.StringMingling do
     a = IO.gets("") |> String.trim()
     b = IO.gets("") |> String.trim()
 
-    mingle(a, b) |> IO.puts()
+    mingle2(a, b) |> IO.puts()
+  end
+
+  def mingle2(a, b) do
+    Enum.zip(String.to_charlist(a), String.to_charlist(b))
+    |> Enum.map_join(fn {a, b} -> <<a, b>> end)
   end
 
   def mingle(a, b), do: do_mingle(a, b, "")
