@@ -56,4 +56,13 @@ defmodule RecursionTest do
              [{3, 8}, {5, 6}, {5, 10}]
            ]
   end
+
+  test "String Mingling" do
+    alias Recursion.StringMingling
+
+    assert StringMingling.mingle("a", "b") == "ab"
+    assert StringMingling.mingle("", "") == ""
+    assert StringMingling.mingle("abcde", "12345") == "a1b2c3d4e5"
+    assert StringMingling.mingle("abcde", "abcde") == "aabbccddee"
+  end
 end

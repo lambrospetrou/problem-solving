@@ -135,6 +135,25 @@ defmodule Recursion.Sierpinski do
   end
 end
 
+defmodule Recursion.StringMingling do
+  def main() do
+    a = IO.gets("") |> String.trim()
+    b = IO.gets("") |> String.trim()
+
+    mingle(a, b) |> IO.puts()
+  end
+
+  def mingle(a, b), do: do_mingle(a, b, "")
+
+  defp do_mingle("", "", result) do
+    result
+  end
+
+  defp do_mingle(<<a::utf8, rest_a::binary>>, <<b::utf8, rest_b::binary>>, result) do
+    do_mingle(rest_a, rest_b, <<result::binary, a::utf8, b::utf8>>)
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
