@@ -159,6 +159,27 @@ defmodule Recursion.StringMingling do
   end
 end
 
+defmodule Recursion.StringOPermute do
+  def main() do
+    n = IO.gets("") |> String.trim() |> String.to_integer()
+
+    1..n
+    |> Enum.map(fn _ -> IO.gets("") |> String.trim() end)
+    |> Enum.map(&permute/1)
+    |> Enum.each(&IO.puts/1)
+  end
+
+  def permute(s), do: do_permute(s, "")
+
+  defp do_permute("", result) do
+    result
+  end
+
+  defp do_permute(<<a::utf8, b::utf8, rest::binary>>, result) do
+    do_permute(rest, <<result::binary, b::utf8, a::utf8>>)
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.

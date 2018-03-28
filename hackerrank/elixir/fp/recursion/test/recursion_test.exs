@@ -65,4 +65,13 @@ defmodule RecursionTest do
     assert StringMingling.mingle("abcde", "12345") == "a1b2c3d4e5"
     assert StringMingling.mingle("abcde", "abcde") == "aabbccddee"
   end
+
+  test "String O Permute" do
+    alias Recursion.StringOPermute
+
+    assert StringOPermute.permute("ab") == "ba"
+    assert StringOPermute.permute("") == ""
+    assert StringOPermute.permute("abcd") == "badc"
+    assert StringOPermute.permute("a1b2c3d4e5") == "1a2b3c4d5e"
+  end
 end
