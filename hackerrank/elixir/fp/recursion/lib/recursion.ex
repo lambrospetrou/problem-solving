@@ -180,6 +180,82 @@ defmodule Recursion.StringOPermute do
   end
 end
 
+defmodule Recursion.FractalTrees do
+  def main() do
+    n = IO.gets("") |> String.trim() |> String.to_integer()
+
+    generate(n, 63, 100)
+    |> Enum.each(&IO.puts/1)
+  end
+
+  def generate(n, rows, columns) do
+    aces(n, columns, 16)
+    |> Enum.map(fn row -> generate_row(row, columns) end)
+    |> populate_empty_rows(rows, columns)
+  end
+
+  def populate_empty_rows(rows_with_aces, rows, columns) do
+    rows..(length(rows_with_aces) + 1)
+    |> Enum.map(fn _ -> String.duplicate("_", columns) end)
+    |> Enum.concat(rows_with_aces)
+  end
+
+  # Populate the underscores in each row along with the aces
+  def generate_row(aces, columns) do
+    do_generate_row(aces, columns, "", 0)
+  end
+
+  def do_generate_row([], columns, result, previous),
+    do: <<result::binary, String.duplicate("_", columns - previous)::binary>>
+
+  def do_generate_row([pos | rest], columns, result, previous) do
+    do_generate_row(
+      rest,
+      columns,
+      <<result::binary, String.duplicate("_", pos - previous - 1)::binary, ?1::utf8>>,
+      pos
+    )
+  end
+
+  # Calculate where the aces are in each row
+  def aces(0, _columns, _initialStep), do: []
+
+  def aces(n, columns, initialStep) do
+    do_aces(:vertical, n, initialStep - 1, initialStep, [[div(columns, 2)]])
+  end
+
+  # everything done
+  def do_aces(:vertical, 0, _, _steps, result), do: result
+
+  def do_aces(:vertical, n, 0, steps, result) do
+    do_aces(:diag_first, n, steps, steps, result)
+  end
+
+  def do_aces(:vertical, n, crow, steps, [h | _rest] = result) do
+    do_aces(:vertical, n, crow - 1, steps, [h | result])
+  end
+
+  def do_aces(:diag_first, n, crow, steps, [h | _rest] = result) do
+    do_aces(:diag_rest, n, crow - 1, steps, [
+      Enum.flat_map(h, fn pos -> [pos - 1, pos + 1] end) | result
+    ])
+  end
+
+  def do_aces(:diag_rest, n, 0, steps, result) do
+    do_aces(:vertical, n - 1, div(steps, 2), div(steps, 2), result)
+  end
+
+  def do_aces(:diag_rest, n, crow, steps, [h | _rest] = result) do
+    do_aces(:diag_rest, n, crow - 1, steps, [do_aces_diag(h, []) | result])
+  end
+
+  def do_aces_diag([], result), do: result
+
+  def do_aces_diag([a, b | rest], result) do
+    do_aces_diag(rest, result ++ [a - 1, b + 1])
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.

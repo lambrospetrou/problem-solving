@@ -74,4 +74,13 @@ defmodule RecursionTest do
     assert StringOPermute.permute("abcd") == "badc"
     assert StringOPermute.permute("a1b2c3d4e5") == "1a2b3c4d5e"
   end
+
+  test "Fractal trees" do
+    import Recursion.FractalTrees
+
+    assert do_aces_diag([], [1, 2]) == [1, 2]
+    assert do_aces_diag([2, 6, 10, 14], []) == [1, 7, 9, 15]
+    assert aces(1, 8, 2) == [[2, 6], [3, 5], [4], [4]]
+    assert aces(2, 8, 2) == [[1, 3, 5, 7], [2, 6], [2, 6], [3, 5], [4], [4]]
+  end
 end
