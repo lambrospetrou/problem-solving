@@ -83,4 +83,13 @@ defmodule RecursionTest do
     assert aces(1, 8, 2) == [[2, 6], [3, 5], [4], [4]]
     assert aces(2, 8, 2) == [[1, 3, 5, 7], [2, 6], [2, 6], [3, 5], [4], [4]]
   end
+
+  test "String compresion" do
+    import Recursion.StringCompression
+
+    assert compress("") == ""
+    assert compress("a") == "a"
+    assert compress("abcde") == "abcde"
+    assert compress("aabccccdeeeeef") == "a2bc4de5f"
+  end
 end

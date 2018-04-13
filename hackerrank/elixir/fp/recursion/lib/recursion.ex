@@ -256,6 +256,30 @@ defmodule Recursion.FractalTrees do
   end
 end
 
+defmodule Recursion.StringCompression do
+  def main() do
+    IO.gets("")
+    |> String.trim()
+    |> compress()
+    |> IO.puts()
+  end
+
+  def compress(<<>>), do: ""
+  def compress(<<ch::utf8, rest::binary>>), do: do_compress(rest, {ch, 1}, "")
+
+  defp do_compress(<<>>, previous, result), do: add_result(previous, result)
+
+  defp do_compress(<<ch::utf8, rest::binary>>, {ch, x}, result),
+    do: do_compress(rest, {ch, x + 1}, result)
+
+  defp do_compress(<<ch::utf8, rest::binary>>, previous, result),
+    do: do_compress(rest, {ch, 1}, add_result(previous, result))
+
+  defp add_result({ch, 1}, result), do: <<result::binary, ch::utf8>>
+
+  defp add_result({ch, x}, result), do: <<result::binary, ch::utf8, Integer.to_string(x)::binary>>
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
