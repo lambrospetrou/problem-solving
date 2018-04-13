@@ -306,6 +306,29 @@ defmodule Recursion.PrefixCompression do
   end
 end
 
+defmodule Recursion.StringReduction do
+  def main() do
+    x = IO.gets("") |> String.trim()
+
+    reduct(x) |> IO.puts()
+  end
+
+  def reduct(s) do
+    do_reduct(s, %{}, "")
+  end
+
+  defp do_reduct(<<>>, _seen, result) do
+    result
+  end
+
+  defp do_reduct(<<ch::utf8, rest::binary>>, seen, result) do
+    case seen[ch] do
+      nil -> do_reduct(rest, Map.put(seen, ch, 1), <<result::binary, ch::utf8>>)
+      _ -> do_reduct(rest, seen, result)
+    end
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.

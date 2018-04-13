@@ -100,4 +100,13 @@ defmodule RecursionTest do
     assert prefix_compress("a", "a") == [{1, "a"}, {0, ""}, {0, ""}]
     assert prefix_compress("abc", "abdef") == [{2, "ab"}, {1, "c"}, {3, "def"}]
   end
+
+  test "String reduction" do
+    import Recursion.StringReduction
+
+    assert reduct("abcd") == "abcd"
+    assert reduct("") == ""
+    assert reduct("aabccdccceeeefffeee") == "abcdef"
+    assert reduct("ababababababababababababababaabababababababcffff") == "abcf"
+  end
 end
