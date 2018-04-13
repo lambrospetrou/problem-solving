@@ -92,4 +92,12 @@ defmodule RecursionTest do
     assert compress("abcde") == "abcde"
     assert compress("aabccccdeeeeef") == "a2bc4de5f"
   end
+
+  test "Prefix compresion" do
+    import Recursion.PrefixCompression
+
+    assert prefix_compress("", "") == [{0, ""}, {0, ""}, {0, ""}]
+    assert prefix_compress("a", "a") == [{1, "a"}, {0, ""}, {0, ""}]
+    assert prefix_compress("abc", "abdef") == [{2, "ab"}, {1, "c"}, {3, "def"}]
+  end
 end

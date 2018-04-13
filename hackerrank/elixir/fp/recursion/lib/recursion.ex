@@ -280,6 +280,32 @@ defmodule Recursion.StringCompression do
   defp add_result({ch, x}, result), do: <<result::binary, ch::utf8, Integer.to_string(x)::binary>>
 end
 
+defmodule Recursion.PrefixCompression do
+  def main() do
+    x = IO.gets("") |> String.trim()
+    y = IO.gets("") |> String.trim()
+
+    prefix_compress(x, y)
+    |> Enum.each(fn {n, str} -> IO.puts("#{n} #{str}") end)
+  end
+
+  def prefix_compress(x, y), do: do_compress(x, y, "")
+
+  defp do_compress(<<>>, <<>>, common), do: result("", "", common)
+  defp do_compress(<<>>, b, common), do: result("", b, common)
+  defp do_compress(a, <<>>, common), do: result(a, "", common)
+
+  defp do_compress(<<a::utf8, aa::binary>>, <<a::utf8, bb::binary>>, common) do
+    do_compress(aa, bb, <<common::binary, a::utf8>>)
+  end
+
+  defp do_compress(a, b, common), do: result(a, b, common)
+
+  defp result(a, b, common) do
+    [{String.length(common), common}, {String.length(a), a}, {String.length(b), b}]
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
