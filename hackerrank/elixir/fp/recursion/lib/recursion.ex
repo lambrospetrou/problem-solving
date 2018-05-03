@@ -329,6 +329,59 @@ defmodule Recursion.StringReduction do
   end
 end
 
+defmodule Recursion.FilterElements do
+  @moduledoc false
+
+  def main() do
+    t = IO.gets("") |> String.trim() |> String.to_integer()
+
+    1..t
+    |> Enum.map(fn _ ->
+      [n, k] = IO.gets("") |> String.trim() |> String.split() |> Enum.map(&String.to_integer/1)
+      nums = IO.gets("") |> String.trim() |> String.split() |> Enum.map(&String.to_integer/1)
+
+      {n, k, nums}
+    end)
+    |> Enum.map(&execute_case/1)
+    |> Enum.map(&case_output/1)
+    |> Enum.each(&IO.puts/1)
+  end
+
+  def case_output([]), do: "-1"
+  def case_output(result), do: Enum.join(result, " ")
+
+  @doc """
+
+      iex> Recursion.FilterElements.execute_case({0, 2, [1,2,3,1,2,3,1,2,3]})
+      [1,2,3]
+
+      iex> Recursion.FilterElements.execute_case({0, 2, [3,2,1,2,3]})
+      [3,2]
+
+      iex> Recursion.FilterElements.execute_case({0, 3, [5,1,2,5,3,2,5,1,1,3,3,2]})
+      [5,1,2,3]
+
+  """
+  def execute_case({_, k, nums}) do
+    do_aggregate(nums, %{}, 1)
+    |> Enum.filter(fn {_, {_, count}} -> count >= k end)
+    |> Enum.sort_by(fn {_, {idx, _}} -> idx end)
+    |> Enum.map(fn {key, _} -> key end)
+  end
+
+  defp do_aggregate([], result, _), do: result
+
+  defp do_aggregate([h | rest], result, idx) do
+    {_, new_result} =
+      Map.get_and_update(result, h, fn
+        nil -> {nil, {idx, 1}}
+        {first_idx, count} = old -> {old, {first_idx, count + 1}}
+      end)
+
+    do_aggregate(rest, new_result, idx + 1)
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
