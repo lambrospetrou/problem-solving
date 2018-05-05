@@ -405,8 +405,9 @@ defmodule Recursion.SequenceColors do
       "False"
 
   """
-  def process_line(line) do 
+  def process_line(line) do
     initial_map = %{?Y => 0, ?B => 0, ?R => 0, ?G => 0}
+
     case do_line(initial_map, line, true) do
       false -> "False"
       true -> "True"
@@ -415,19 +416,19 @@ defmodule Recursion.SequenceColors do
 
   defp do_line(_, _, false), do: false
   defp do_line(agg, <<>>, _), do: agg |> validate()
+
   defp do_line(agg, <<c::utf8, rest::binary>>, _continue) do
     new_agg = Map.update(agg, c, 1, &(&1 + 1))
     do_line(new_agg, rest, validate_prefix(new_agg))
   end
 
   defp validate_prefix(%{?Y => y, ?B => b, ?R => r, ?G => g}) do
-    abs(y-b) <= 1 && abs(r-g) <= 1
+    abs(y - b) <= 1 && abs(r - g) <= 1
   end
 
-  defp validate(%{?Y => y, ?B => b, ?R => r, ?G => g}) do 
+  defp validate(%{?Y => y, ?B => b, ?R => r, ?G => g}) do
     y == b && r == g
   end
-  
 end
 
 defmodule Recursion.SuperDigit do
@@ -456,8 +457,46 @@ defmodule Recursion.SuperDigit do
   end
 
   defp do_sum(<<>>, sum), do: sum
-  defp do_sum(<<n, rest::binary>>, sum), do: do_sum(rest, sum+(n - ?0))
+  defp do_sum(<<n, rest::binary>>, sum), do: do_sum(rest, sum + (n - ?0))
+end
 
+defmodule Recursion.SumOfPowers do
+  def main() do
+    x = IO.gets("") |> String.trim() |> String.to_integer()
+    n = IO.gets("") |> String.trim() |> String.to_integer()
+
+    ways(x, n) |> IO.puts()
+  end
+
+  @doc """
+      iex> Recursion.SumOfPowers.ways(4, 2)
+      1
+      
+      iex> Recursion.SumOfPowers.ways(10, 2)
+      1
+      
+      iex> Recursion.SumOfPowers.ways(100, 2)
+      3
+      
+      iex> Recursion.SumOfPowers.ways(100, 3)
+      1
+  """
+  def ways(x, n) do
+    max_divisor = trunc(:math.ceil(:math.pow(x, 1 / n)))
+    do_ways(x, n, 1, max_divisor)
+  end
+
+  defp do_ways(_x, _n, cur, max) when cur == max + 1, do: 0
+
+  defp do_ways(x, n, cur, max) do
+    remain = x - trunc(:math.pow(cur, n))
+
+    case remain do
+      0 -> 1
+      j when j < 0 -> 0
+      _ -> do_ways(remain, n, cur + 1, max) + do_ways(x, n, cur + 1, max)
+    end
+  end
 end
 
 defmodule Recursion do

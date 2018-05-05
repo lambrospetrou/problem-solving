@@ -3,6 +3,7 @@ defmodule RecursionTest do
   doctest Recursion.FilterElements
   doctest Recursion.SequenceColors
   doctest Recursion.SuperDigit
+  doctest Recursion.SumOfPowers
 
   test "gcd" do
     assert Recursion.Gcd.gcd(1, 1) == 1

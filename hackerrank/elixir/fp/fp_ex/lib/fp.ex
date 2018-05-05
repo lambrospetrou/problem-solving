@@ -1,3 +1,3 @@
 defmodule FP do
-    @moduledoc false
+  @moduledoc false
 end
