@@ -2,6 +2,7 @@ defmodule RecursionTest do
   use ExUnit.Case
   doctest Recursion.FilterElements
   doctest Recursion.SequenceColors
+  doctest Recursion.SuperDigit
 
   test "gcd" do
     assert Recursion.Gcd.gcd(1, 1) == 1

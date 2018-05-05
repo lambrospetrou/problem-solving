@@ -430,6 +430,36 @@ defmodule Recursion.SequenceColors do
   
 end
 
+defmodule Recursion.SuperDigit do
+  def main() do
+    [n, k] = IO.gets("") |> String.trim() |> String.split(" ")
+    super_digit(n, String.to_integer(k)) |> IO.puts()
+  end
+
+  @doc """
+      iex> Recursion.SuperDigit.super_digit("123", 1)
+      6
+      
+      iex> Recursion.SuperDigit.super_digit("123", 2)
+      3
+      
+      iex> Recursion.SuperDigit.super_digit("148", 3)
+      3
+  """
+  def super_digit(n, k), do: do_super_digit(sum_digits(n, k))
+
+  defp do_super_digit(<<digit>>), do: digit - ?0
+  defp do_super_digit(digits), do: do_super_digit(sum_digits(digits))
+
+  defp sum_digits(digits, k \\ 1) do
+    Integer.to_string(do_sum(digits, 0) * k)
+  end
+
+  defp do_sum(<<>>, sum), do: sum
+  defp do_sum(<<n, rest::binary>>, sum), do: do_sum(rest, sum+(n - ?0))
+
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
