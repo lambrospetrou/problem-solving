@@ -406,7 +406,7 @@ defmodule Recursion.SequenceColors do
 
   """
   def process_line(line) do 
-    initial_map = %{"Y" => 0, "B" => 0, "R" => 0, "G" => 0}
+    initial_map = %{?Y => 0, ?B => 0, ?R => 0, ?G => 0}
     case do_line(initial_map, line, true) do
       false -> "False"
       true -> "True"
@@ -416,15 +416,15 @@ defmodule Recursion.SequenceColors do
   defp do_line(_, _, false), do: false
   defp do_line(agg, <<>>, _), do: agg |> validate()
   defp do_line(agg, <<c::utf8, rest::binary>>, _continue) do
-    new_agg = Map.update(agg, <<c>>, 1, &(&1 + 1))
+    new_agg = Map.update(agg, c, 1, &(&1 + 1))
     do_line(new_agg, rest, validate_prefix(new_agg))
   end
 
-  defp validate_prefix(%{"Y" => y, "B" => b, "R" => r, "G" => g}) do
+  defp validate_prefix(%{?Y => y, ?B => b, ?R => r, ?G => g}) do
     abs(y-b) <= 1 && abs(r-g) <= 1
   end
 
-  defp validate(%{"Y" => y, "B" => b, "R" => r, "G" => g}) do 
+  defp validate(%{?Y => y, ?B => b, ?R => r, ?G => g}) do 
     y == b && r == g
   end
   
