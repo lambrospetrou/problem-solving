@@ -533,12 +533,7 @@ defmodule Recursion.SuperQueens do
   end
 
   def is_valid(placed, new_pos) do
-    check_diagonal(placed, new_pos) && check_horizontal(placed, new_pos) &&
-      check_L_move(placed, new_pos)
-  end
-
-  defp check_horizontal(placed, new_pos) do
-    Enum.all?(placed, fn pos -> pos != new_pos end)
+    check_diagonal(placed, new_pos) && check_L_move(placed, new_pos)
   end
 
   defp check_diagonal(placed, new_pos) do
