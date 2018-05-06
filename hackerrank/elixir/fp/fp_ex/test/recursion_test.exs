@@ -4,6 +4,7 @@ defmodule RecursionTest do
   doctest Recursion.SequenceColors
   doctest Recursion.SuperDigit
   doctest Recursion.SumOfPowers
+  doctest Recursion.SuperQueens
 
   test "gcd" do
     assert Recursion.Gcd.gcd(1, 1) == 1

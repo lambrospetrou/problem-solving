@@ -507,7 +507,16 @@ defmodule Recursion.SuperQueens do
     |> Enum.reduce(0, fn _, s -> s + 1 end)
     |> IO.puts()
   end
-  
+
+  @doc """
+      iex> Recursion.SuperQueens.positions(10)
+      [
+        [8, 5, 2, 10, 7, 4, 1, 9, 6, 3],
+        [7, 3, 10, 6, 2, 9, 5, 1, 8, 4],
+        [4, 8, 1, 5, 9, 2, 6, 10, 3, 7],
+        [3, 6, 9, 1, 4, 7, 10, 2, 5, 8]
+      ]
+  """
   def positions(n) do
     do_positions(n, n)
   end
@@ -517,13 +526,10 @@ defmodule Recursion.SuperQueens do
   end
 
   def do_positions(n, nQueens) do
-    do_positions(n, nQueens - 1)
-    |> Enum.map(fn placed ->
-      (Enum.to_list(1..n) -- placed)
-      |> Enum.filter(fn pos -> is_valid(placed, pos) end)
-      |> Enum.map(fn pos -> [pos | placed] end)
-    end)
-    |> Enum.flat_map(& &1)
+    for placed <- do_positions(n, nQueens - 1),
+        new_pos <- Enum.to_list(1..n) -- placed,
+        is_valid(placed, new_pos),
+        do: [new_pos | placed]
   end
 
   def is_valid(placed, new_pos) do
