@@ -499,6 +499,69 @@ defmodule Recursion.SumOfPowers do
   end
 end
 
+defmodule Recursion.SuperQueens do
+  def main() do
+    n = IO.gets("") |> String.trim() |> String.to_integer()
+
+    positions(n)
+    |> Enum.reduce(0, fn _, s -> s + 1 end)
+    |> IO.puts()
+  end
+  
+  def positions(n) do
+    do_positions(n, n)
+  end
+
+  def do_positions(n, 1) do
+    1..n |> Enum.map(&[&1])
+  end
+
+  def do_positions(n, nQueens) do
+    do_positions(n, nQueens - 1)
+    |> Enum.map(fn placed ->
+      (Enum.to_list(1..n) -- placed)
+      |> Enum.filter(fn pos -> is_valid(placed, pos) end)
+      |> Enum.map(fn pos -> [pos | placed] end)
+    end)
+    |> Enum.flat_map(& &1)
+  end
+
+  def is_valid(placed, new_pos) do
+    check_diagonal(placed, new_pos) && check_horizontal(placed, new_pos) &&
+      check_L_move(placed, new_pos)
+  end
+
+  defp check_horizontal(placed, new_pos) do
+    Enum.all?(placed, fn pos -> pos != new_pos end)
+  end
+
+  defp check_diagonal(placed, new_pos) do
+    placed
+    |> Enum.with_index()
+    |> Enum.all?(fn {pos, distance} ->
+      new_pos != pos + (distance + 1) && new_pos != pos - (distance + 1)
+    end)
+  end
+
+  defp check_L_move(placed, new_pos) do
+    placed
+    |> Enum.with_index()
+    |> Enum.all?(fn
+      # too far so no harm
+      {_pos, distance} when distance >= 2 ->
+        true
+
+      # check L-move vertically
+      {pos, 0} ->
+        trunc(abs(pos - new_pos)) != 2
+
+      # check L-move horizontally
+      {pos, 1} ->
+        trunc(abs(pos - new_pos)) != 1
+    end)
+  end
+end
+
 defmodule Recursion do
   @moduledoc """
   Documentation for Recursion.
