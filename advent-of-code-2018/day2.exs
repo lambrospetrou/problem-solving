@@ -14,16 +14,7 @@ defmodule AoC.Day2 do
   def handle_id(id) do
     id
     |> String.to_charlist()
-    |> Enum.reduce(%{}, fn (x, acc) ->
-      {_, new_acc} = Map.get_and_update(acc, x, fn current_x -> 
-        if current_x == nil do
-          {current_x, 1}
-        else
-          {current_x, current_x + 1}
-        end
-      end)
-      new_acc
-    end)
+    |> Enum.reduce(%{}, fn (x, acc) -> Map.update(acc, x, 1, &(&1 + 1)) end)
     |> Map.values()
     |> Enum.filter(&(&1 == 2 || &1 == 3))
     |> Enum.sort() |> Enum.uniq()
@@ -37,14 +28,16 @@ defmodule AoC.Day2 do
 
   def part2(input \\ "day2-input.txt") do
     get_input(input) 
+    |> Enum.map(&String.to_charlist/1)
+    |> IO.inspect()
     |> do_part2()
   end
 
   def do_part2([h | t]) do
     matches = Enum.filter(t, fn id -> 
-      Enum.zip(String.to_charlist(h), String.to_charlist(id))
-      |> Enum.reduce(0, fn ({l, r}, acc) -> if l == r do acc else acc + 1 end end)
-      |> (fn diff -> if diff == 1 do true else false end end).()
+      Enum.zip(h, id)
+      |> Enum.count(fn {l, r} -> l != r end)
+      |> (fn diff -> diff == 1 end).()
     end)
 
     if Enum.empty?(matches) do
@@ -55,7 +48,7 @@ defmodule AoC.Day2 do
   end
 
   def same_chars(l, r) do 
-    Enum.zip(String.to_charlist(l), String.to_charlist(r))
+    Enum.zip(l, r)
     |> Enum.filter(fn {a,b} -> a == b end)
     |> Enum.map(fn {a,_} -> a end)
     |> String.Chars.to_string()
