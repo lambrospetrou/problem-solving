@@ -116,6 +116,29 @@ defmodule Day6Ex do
     MapSet.new(x ++ y) |> MapSet.delete(-1)
   end
 
+  @doc """
+      iex> Day6Ex.mark_safe_region({[{2,2}, {1,3}, {2,3}, {3,3}], {1,1,3,3}}, 4)
+      1
+
+      iex> Day6Ex.mark_safe_region({[{2,2}, {1,3}, {2,3}, {3,3}], {1,1,3,3}}, 6)
+      4
+  """
+  def mark_safe_region({coords, {minx, miny, maxx, maxy}}, limit \\ 10000) do
+    marked =
+      Enum.reduce(coords, %{}, fn {x, y}, grid ->
+        Enum.reduce(minx..maxx, grid, fn posx, grid ->
+          Enum.reduce(miny..maxy, grid, fn posy, grid ->
+            distance = manhattan(x, y, posx, posy)
+            Map.update(grid, {posx, posy}, distance, fn
+              nil -> nil
+              cdistance -> if cdistance + distance < limit do cdistance + distance else nil end
+            end)
+          end)
+        end)
+      end)
+
+    Enum.count(marked, fn {_, total} -> total != nil end)
+  end
 
   @doc """
       iex> Day6Ex.part1_string("
@@ -138,6 +161,29 @@ defmodule Day6Ex do
   def part1(input \\ "day6-input.txt") do
     File.read!(input)
     |> part1_string()
+  end
+
+    @doc """
+      iex> Day6Ex.part2_example("
+      ...> 1, 1,
+      ...> 1, 6,
+      ...> 8, 3,
+      ...> 3, 4,
+      ...> 5, 5,
+      ...> 8, 9,
+      ...> ")
+      16
+  """
+  def part2_example(string) do
+    string
+    |> parse_coords()
+    |> mark_safe_region(32)
+  end
+
+  def part2(input \\ "day6-input.txt") do
+    File.read!(input)
+    |> parse_coords()
+    |> mark_safe_region()
   end
 
 end
