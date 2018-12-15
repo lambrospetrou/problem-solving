@@ -1,46 +1,39 @@
 defmodule Day5Ex do
   @doc """
 
-      iex> Day5Ex.count_polymers(["d", "a", "b", "A", "c", "C", "a", "C", "B", "A", "c", "C", "c", "a", "D", "A"])
+      iex> Day5Ex.count_polymers("dabAcCaCBAcCcaDA")
       10
 
   """
   def count_polymers(letters) do
-    letters |> do_count_polymers([]) |> length
+    letters |> do_count_polymers([]) |> length()
   end
 
-  def do_count_polymers([], prefix) do
+  def do_count_polymers(<<>>, prefix) do
     prefix |> Enum.reverse()
   end
-  def do_count_polymers([a], prefix) do
-    [a | prefix] |> Enum.reverse()
+  def do_count_polymers(<<a, rest::binary>>, [b | prefix]) when abs(a - b) == 32 do
+    do_count_polymers(rest, prefix)
   end
-  def do_count_polymers([a, b | rest], prefix) do
-    if polarity_conflict(a, b) do
-      # restart the check from the beginning (naive)
-      do_count_polymers((prefix |> Enum.reverse()) ++ rest, [])
-    else
-      do_count_polymers([b | rest], [a | prefix])
-    end
+  def do_count_polymers(<<a, rest::binary>>, prefix) do
+    do_count_polymers(rest, [a | prefix])
   end
-
-  def polarity_conflict(<<a>>, <<b>>), do: abs(a - b) == 32
 
   @doc """
 
-      iex> Day5Ex.minimum_polymer(["d", "a", "b", "A", "c", "C", "a", "C", "B", "A", "c", "C", "c", "a", "D", "A"])
+      iex> Day5Ex.minimum_polymer("dabAcCaCBAcCcaDA")
       4
 
   """
   def minimum_polymer(letters) do
     letters
+    |> String.split("", trim: true)
     |> Enum.uniq_by(&String.upcase/1)
-    |> IO.inspect()
     |> Task.async_stream(fn x ->
       letters
-      |> Enum.filter(&(String.upcase(&1) != String.upcase(x)))
+      |> String.replace([String.upcase(x), String.downcase(x)], "")
       |> count_polymers()
-    end, ordered: false, max_concurrency: 4, timeout: 999999)
+    end, ordered: false)
     |> Stream.map(fn {:ok, res} -> res end)
     |> Enum.min()
   end
@@ -49,19 +42,22 @@ defmodule Day5Ex do
   @doc """
 
       iex> Day5Ex.part1()
-      10889
+      10888
 
   """
   def part1(input \\ "day5-input.txt") do
     File.read!(input)
-    |> String.split("", trim: true)
+    |> String.trim()
     |> count_polymers()
   end
 
+  @doc """
+      iex> Day5Ex.part2()
+      6952
+  """
   def part2(input \\ "day5-input.txt") do
     File.read!(input)
-    |> String.split("", trim: true)
-    |> Enum.filter(&(byte_size(String.trim(&1)) > 0))
+    |> String.trim()
     |> minimum_polymer()
   end
 end
