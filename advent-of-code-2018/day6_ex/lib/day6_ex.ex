@@ -124,20 +124,20 @@ defmodule Day6Ex do
       4
   """
   def mark_safe_region({coords, {minx, miny, maxx, maxy}}, limit \\ 10000) do
-    marked =
-      Enum.reduce(coords, %{}, fn {x, y}, grid ->
-        Enum.reduce(minx..maxx, grid, fn posx, grid ->
-          Enum.reduce(miny..maxy, grid, fn posy, grid ->
-            distance = manhattan(x, y, posx, posy)
-            Map.update(grid, {posx, posy}, distance, fn
-              nil -> nil
-              cdistance -> if cdistance + distance < limit do cdistance + distance else nil end
-            end)
-          end)
-        end)
-      end)
+    x_range = minx..maxx
+    y_range = miny..maxy
 
-    Enum.count(marked, fn {_, total} -> total != nil end)
+    sum_coord_distances = fn posx, posy ->
+      Enum.reduce(coords, 0, fn {x, y}, acc -> acc + manhattan(x, y, posx, posy) end)
+    end
+
+    x_range
+    |> Task.async_stream(fn posx ->
+      Enum.reduce(y_range, 0, fn posy, acc ->
+        if (sum_coord_distances.(posx, posy) < limit) do acc + 1 else acc end
+      end)
+    end, ordered: false)
+    |> Enum.reduce(0, fn {:ok, count}, acc -> count + acc end)
   end
 
   @doc """
