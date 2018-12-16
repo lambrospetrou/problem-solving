@@ -95,7 +95,7 @@ defmodule Day7Ex do
   def process_instructions({instructions, ready, not_ready}) do
     process_instructions(instructions, ready, not_ready, [])
   end
-  def process_instructions(_instructions, [], %{}, result) do
+  def process_instructions(_instructions, [], not_ready, result) when map_size(not_ready) == 0 do
     result |> Enum.reverse()
   end
   def process_instructions(instructions, [next | ready], not_ready, result) do
