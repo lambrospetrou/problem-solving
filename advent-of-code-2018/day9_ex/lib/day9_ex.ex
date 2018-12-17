@@ -15,22 +15,22 @@ defmodule Day9Ex do
   end
 
   @doc """
-      iex> Day9Ex.parse_input("9 players; last marble is worth 25 points") |> Day9Ex.high_score()
+      iex> Day9Ex.high_score({9, 25})
       32
 
-      iex> Day9Ex.parse_input("10 players; last marble is worth 1618 points") |> Day9Ex.high_score()
+      iex> Day9Ex.high_score({10, 1618})
       8317
 
-      iex> Day9Ex.parse_input("13 players; last marble is worth 7999 points") |> Day9Ex.high_score()
+      iex> Day9Ex.high_score({13, 7999})
       146373
 
-      iex> Day9Ex.parse_input("17 players; last marble is worth 1104 points") |> Day9Ex.high_score()
+      iex> Day9Ex.high_score({17, 1104})
       2764
 
-      iex> Day9Ex.parse_input("21 players; last marble is worth 6111 points") |> Day9Ex.high_score()
+      iex> Day9Ex.high_score({21, 6111})
       54718
 
-      iex> Day9Ex.parse_input("30 players; last marble is worth 5807 points") |> Day9Ex.high_score()
+      iex> Day9Ex.high_score({30, 5807})
       37305
   """
   def high_score({players_count, max_points}) do
@@ -44,7 +44,7 @@ defmodule Day9Ex do
 
     {_, _, score} =
       Enum.reduce(1..max_points, initial_acc, fn next, {player, marbles, score} ->
-        {marbles, score} = do_high_score(next, player, marbles, score)
+        {marbles, score} = next_move(next, player, marbles, score)
         {next_player.(player), marbles, score}
       end)
 
@@ -53,7 +53,7 @@ defmodule Day9Ex do
     |> Enum.max()
   end
 
-  def do_high_score(next, player, marbles, score) when rem(next, 23) == 0 do
+  def next_move(next, player, marbles, score) when rem(next, 23) == 0 do
     # Remove the `7th` marble counter clockwise and assign `current` to the 6th counter clockwise
     marbles = Enum.reduce(1..7, marbles, fn _, marbles ->
       CircularList.counter_clockwise(marbles)
@@ -64,7 +64,7 @@ defmodule Day9Ex do
     {marbles, score}
   end
 
-  def do_high_score(next, _player, marbles, score) do
+  def next_move(next, _player, marbles, score) do
     # Insert `next` after one marble clockwise
     marbles =
       marbles
@@ -74,7 +74,13 @@ defmodule Day9Ex do
   end
 
   defmodule CircularList do
-    def new(c_clw), do: {c_clw, []}
+    @moduledoc """
+    This circular list manages a tuple with two lists where they are of the form:
+
+    { [current | counter_clockwise_elements], [clockwise_elements] }
+    """
+
+    def new([_at_least_one | _rest] = c_clw), do: {c_clw, []}
 
     def counter_clockwise({[current], clw}), do: {Enum.reverse(clw), [current]}
     def counter_clockwise({[current | c_clw], clw}), do: {c_clw, [current | clw]}
