@@ -36,43 +36,41 @@ defmodule Day9Ex do
   def high_score({players_count, max_points}) do
     next_player = fn player -> rem(player, players_count) + 1 end
 
-    {_, score} =
-      do_high_score(
-        1,
-        max_points,
-        1,
-        next_player,
-        CircularList.new([0]),
-        %{})
+    initial_acc = {
+      1,
+      CircularList.new([0]),
+      %{}
+    }
+
+    {_, _, score} =
+      Enum.reduce(1..max_points, initial_acc, fn next, {player, marbles, score} ->
+        {marbles, score} = do_high_score(next, player, marbles, score)
+        {next_player.(player), marbles, score}
+      end)
 
     score
     |> Map.values()
     |> Enum.max()
   end
 
-  def do_high_score(next, max_next, _, _, marbles, score) when next == max_next+1 do
-    {marbles, score}
-  end
-  def do_high_score(next, max_next, player, next_player, marbles, score) when rem(next, 23) == 0 do
+  def do_high_score(next, player, marbles, score) when rem(next, 23) == 0 do
     # Remove the `7th` marble counter clockwise and assign `current` to the 6th counter clockwise
-
     marbles = Enum.reduce(1..7, marbles, fn _, marbles ->
       CircularList.counter_clockwise(marbles)
     end)
     {to_be_removed, marbles} = CircularList.pop_clockwise(marbles)
     score = Map.update(score, player, next + to_be_removed, &(&1 + next + to_be_removed))
 
-    do_high_score(next+1, max_next, next_player.(player), next_player, marbles, score)
+    {marbles, score}
   end
 
-  def do_high_score(next, max_next, player, next_player, marbles, score) do
+  def do_high_score(next, _player, marbles, score) do
     # Insert `next` after one marble clockwise
     marbles =
       marbles
       |> CircularList.clockwise()
       |> CircularList.insert(next)
-
-    do_high_score(next+1, max_next, next_player.(player), next_player, marbles, score)
+    {marbles, score}
   end
 
   defmodule CircularList do
