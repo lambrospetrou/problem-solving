@@ -11,6 +11,7 @@ defmodule Day9Ex do
       |> String.splitter([" players; last marble is worth ", " points"], trim: true)
       |> Enum.take(2)
       |> Enum.map(&String.to_integer/1)
+
     {players, points}
   end
 
@@ -55,9 +56,11 @@ defmodule Day9Ex do
 
   def next_move(next, player, marbles, score) when rem(next, 23) == 0 do
     # Remove the `7th` marble counter clockwise and assign `current` to the 6th counter clockwise
-    marbles = Enum.reduce(1..7, marbles, fn _, marbles ->
-      CircularList.counter_clockwise(marbles)
-    end)
+    marbles =
+      Enum.reduce(1..7, marbles, fn _, marbles ->
+        CircularList.counter_clockwise(marbles)
+      end)
+
     {to_be_removed, marbles} = CircularList.pop_clockwise(marbles)
     score = Map.update(score, player, next + to_be_removed, &(&1 + next + to_be_removed))
 
@@ -70,6 +73,7 @@ defmodule Day9Ex do
       marbles
       |> CircularList.clockwise()
       |> CircularList.insert(next)
+
     {marbles, score}
   end
 
