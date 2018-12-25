@@ -18,14 +18,14 @@ defmodule Day12Ex do
       iex> Day12Ex.part2()
       5100000001377
   """
-  def part2() do
+  def part2(target \\ 50_000_000_000) do
     initial_data =
       File.read!("day12-input.txt")
       |> String.trim()
       |> String.split("\n", trim: true)
       |> parse_input()
 
-    pots = jump_to_generation(initial_data, 50_000_000_000)
+    pots = jump_to_generation(initial_data, target)
     sum_all_plants(pots)
   end
 
@@ -40,7 +40,7 @@ defmodule Day12Ex do
   end
 
   def jump_to_generation(data, target_generation) do
-    {{pots, _, _}, seen} =
+    {{pots, _, _}, _} =
       Enum.reduce_while(1..target_generation, {data, %{}}, fn generation, {data, seen} ->
         next_data = next_generation(data)
         {pots, _, {left, _}} = next_data
@@ -50,30 +50,49 @@ defmodule Day12Ex do
         keys = Map.keys(pots) |> Enum.map(&(&1 - left)) |> Enum.sort()
 
         cycle? = Map.has_key?(seen, keys)
-        {cycle_generation, cycle_sum, cycle_left} = Map.get(seen, keys, {nil, nil, nil})
+        {cycle_generation, _cycle_sum, cycle_left} = Map.get(seen, keys, {nil, nil, nil})
         seen = Map.put_new(seen, keys, {generation, sum, left})
-        # IO.inspect({cycle?, generation, cycle_generation, cycle_sum})
 
         if cycle? do
-          diff_sum = sum - cycle_sum
           cycle_generations = generation - cycle_generation
+          remaining_generations = target_generation - generation
           diff_left = left - cycle_left
 
-          # IO.inspect(
-          #   {sum, cycle_sum, diff_sum, generation, cycle_generation, cycle_generations, left,
-          #    cycle_left}
-          # )
+          skipped_generations = div(remaining_generations, cycle_generations)
+          last_generations = rem(remaining_generations, cycle_generations)
 
-          remaining = target_generation - generation
-          pots = Map.put(pots, remaining * diff_sum, ?#)
+          next_data = move_pots_by(next_data, skipped_generations * diff_left)
 
-          {:halt, {{pots, nil, nil}, seen}}
+          # This solves the problem for me but might not for others with cycle
+          # spanning more than one generation.
+          # diff_sum = sum - cycle_sum
+          # {:halt, {Map.put(pots, remaining_generations * diff_sum, ?#), nil, nil}}
+
+          # I make the assumption that there is no cycle in the remaining generations
+          # after the last cycle has occurred to reach the target_generation.
+          # This is completely unnecessary for the problem since we could just add the
+          # diff_sum to the current pots and solve it. My cycle only has 1 generation so
+          # it is repeated all the time till the end.
+          if last_generations == 0 do
+            {:halt, {next_data, nil}}
+          else
+            jump_to_generation(next_data, last_generations)
+          end
         else
           {:cont, {next_data, seen}}
         end
       end)
 
     pots
+  end
+
+  def move_pots_by({pots, rules, _}, by) do
+    pots =
+      Enum.reduce(pots, %{}, fn {k, v}, acc ->
+        Map.put(acc, k + by, v)
+      end)
+
+    {pots, rules, find_left_right_limits(pots)}
   end
 
   def next_generation({pots, rules, {left, right}}) do
