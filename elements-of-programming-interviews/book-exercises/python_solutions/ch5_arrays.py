@@ -61,7 +61,12 @@ def delete_duplicates_1(A):
             nextUnique += 1
     return A[:afterLast]
 
+
 def delete_duplicates(A):
+    """
+    >>> delete_duplicates([1,2,2,3,3,3,4,4,4,4,5,5,5,5,5,6,7,8,9,10,10])
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    """
     if not A:
         return A;
     afterLast = 1

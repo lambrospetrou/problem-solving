@@ -1,0 +1,6 @@
+# ElixirSolutions
+
+```
+mix test
+```
+
