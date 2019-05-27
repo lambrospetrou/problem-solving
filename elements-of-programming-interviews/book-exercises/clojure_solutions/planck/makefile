@@ -2,6 +2,8 @@
 
 # The argument "-c `clj -Spath`" below gets the clojure classpat which includes
 # the `src` directory by default. Otherwise our namespace resolution will fail.
+# If we use `deps.edn` to specify dependencies then we should use the clojure path
+# to get auto-resolving and downloading automatically using clojure.
 
 test: test-plk
 
