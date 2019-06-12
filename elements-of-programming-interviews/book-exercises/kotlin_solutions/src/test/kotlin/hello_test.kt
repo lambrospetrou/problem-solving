@@ -4,6 +4,11 @@ import com.lambrospetrou.hello.*
 class HelloTest {
   @Test
   fun whenWorld() {
-    assertEquals(Hello().world(), "hello, world")
+      assertEquals("hello, world", Hello().world())
+  }
+
+  @Test
+  fun whenWorld2() {
+      assertEquals("hello, world 2", Hello().world2())
   }
 }
