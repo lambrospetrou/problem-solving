@@ -1,7 +1,7 @@
 package com.lambrospetrou.hello
 
 class Hello {
-  fun world() = "hello, world"
+    fun world() = "hello, world"
 
-  fun world2() = "hello, world 2"
+    fun world2() = "hello, world 2"
 }
