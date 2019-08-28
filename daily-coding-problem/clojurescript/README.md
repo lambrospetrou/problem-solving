@@ -5,7 +5,7 @@
 https://shadow-cljs.github.io/docs/UsersGuide.html#target-node-test
 
 ```
-npm run test
+npm run test:shadow
 
 # or
 
@@ -17,5 +17,9 @@ npm run watch
 https://planck-repl.org/guide-all.html
 
 ```
-npm run plk
+npm run test:plk
+
+# or
+
+npm run test
 ```
