@@ -1,5 +1,5 @@
 {
-  "name": "javascript",
+  "name": "javascript-daily-coding-problem-solutions",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -7,7 +7,7 @@
     "watch": "npm run test -- --watch"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lambros Petrou <lambrospetrou@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^24.0.18",
