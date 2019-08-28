@@ -3,6 +3,7 @@
 (ns solutions.test-runner
   (:require [cljs.test :refer-macros [run-tests]]
             ; All namespaces to be tested
+            [solutions.p0001-test]
             [solutions.p0080-test]))
 
 (defmethod cljs.test/report [:cljs.test/default :end-run-tests] [m]
@@ -10,4 +11,5 @@
     (println "\nOK")
     (println "\nFAIL")))
 
-(run-tests 'solutions.p0080-test)
+(run-tests 'solutions.p0001-test
+           'solutions.p0080-test)
