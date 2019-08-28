@@ -1,0 +1,8 @@
+{:source-paths ["src"]
+ :dependencies []
+ :builds
+ {:test
+  {:target    :node-test
+   :output-to "build/node-tests.js"
+   :ns-regexp "-test$"
+   :autorun   true}}}

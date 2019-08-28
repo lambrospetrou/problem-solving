@@ -1,3 +1,5 @@
+; Run this with `plk src/solutions/test-runner.cljs`
+
 (ns solutions.test-runner
   (:require [cljs.test :refer-macros [run-tests]]
             ; All namespaces to be tested

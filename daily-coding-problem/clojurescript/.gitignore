@@ -1,2 +1,5 @@
 .lumo-cache/
 .planck-cache/
+.shadow-cljs/
+build/
+node_modules/
