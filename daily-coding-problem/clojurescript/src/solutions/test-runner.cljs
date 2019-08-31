@@ -1,7 +1,7 @@
 ; Run this with `plk src/solutions/test-runner.cljs`
 
 (ns solutions.test-runner
-  (:require [cljs.test :refer-macros [run-tests run-all-tests]]
+  (:require [cljs.test :refer [run-all-tests]]
             ; All namespaces to be tested
             [solutions.p0001-test]
             [solutions.p0002-test]
@@ -18,6 +18,4 @@
 (defmethod cljs.test/report [:cljs.test/default :begin-test-var] [m]
   (println "\u001B[32m\t" (-> m :var meta :name) "\u001B[0m"))
 
-; (run-tests 'solutions.p0001-test
-;            'solutions.p0080-test)
 (run-all-tests #"solutions.*-test")
