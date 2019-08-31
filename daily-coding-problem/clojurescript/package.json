@@ -4,8 +4,7 @@
   "description": "ClojureScript library and unit tests with Shadow-CLJS",
   "scripts": {
     "test": "npm run test:plk",
-    "pretest:plk": "mkdir -p .planck-cache",
-    "test:plk": "plk -k .planck-cache src/solutions/test-runner.cljs",
+    "test:plk": "plk src/solutions/test-runner.cljs",
     "test:shadow": "shadow-cljs compile test",
     "watch": "shadow-cljs watch test"
   },
