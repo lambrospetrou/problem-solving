@@ -5,6 +5,7 @@
             ; All namespaces to be tested
             [solutions.p0001-test]
             [solutions.p0002-test]
+            [solutions.p0008-test]
             [solutions.p0080-test]
             [solutions.p0100-test]))
 
