@@ -1,7 +1,7 @@
 interface Node {
   val: number,
-  left: Node,
-  right: Node
+  left?: Node,
+  right?: Node
 };
 
 export const minimumPathSum = node => {

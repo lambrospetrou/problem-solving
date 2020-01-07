@@ -98,3 +98,9 @@ For example, the minimum path in this tree is [10, 5, 1, -1], which has sum 15.
        /
      -1
 ```
+
+### Problem `#145` - Easy
+
+Given the head of a singly linked list, swap every two nodes and return its head.
+
+For example, given `1 -> 2 -> 3 -> 4`, return `2 -> 1 -> 4 -> 3`.
