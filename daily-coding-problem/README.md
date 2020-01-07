@@ -82,3 +82,19 @@ Output: 2
 ```
 
 It takes 1 step to move from `(0, 0)` to `(1, 1)`. It takes one more step to move from `(1, 1)` to `(1, 2)`.
+
+### Problem `#135` - Easy
+
+Given a binary tree, find a minimum path sum from root to a leaf.
+
+For example, the minimum path in this tree is [10, 5, 1, -1], which has sum 15.
+
+```
+  10
+ /  \
+5    5
+ \     \
+   2    1
+       /
+     -1
+```
