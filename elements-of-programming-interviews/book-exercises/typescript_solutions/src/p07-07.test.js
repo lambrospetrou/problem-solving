@@ -25,6 +25,30 @@ const delKthLast = (l, k) => {
     return [l, deleted];
 };
 
+const delKthLastFaster = (l, k) => {
+    if (k < 0) return [l, null];
+
+    const dummy_head = {next: l};
+    // Forward the one iterator k items
+    let it = dummy_head.next;
+    while (it && k > 0) {
+        it = it.next;
+        k--;
+    }
+    if (k > 0) return [l, null];
+
+    let prev = dummy_head;
+    while(it.next) {
+        prev = prev.next;
+        it = it.next;
+    }
+    
+    const deleted = prev.next;
+    prev.next = prev.next.next;
+
+    return [dummy_head.next, deleted];
+};
+
 describe("test", () => {
     const toList = (nums, toBeAppended) => {
         const dummy_head = {};
@@ -56,6 +80,13 @@ describe("test", () => {
         expect(fromList(delKthLast(l(), 0)[0])).toEqual([20,21,22,23,24]);
         expect(fromList(delKthLast(l(), 5)[0])).toEqual([21,22,23,24,25]);
         expect(fromList(delKthLast(l(), 3)[0])).toEqual([20,21,23,24,25]);
+    });
+
+    it("valid k - faster", () => {
+        const l = () => toList([20,21,22,23,24,25]);
+        expect(fromList(delKthLastFaster(l(), 0)[0])).toEqual([20,21,22,23,24]);
+        expect(fromList(delKthLastFaster(l(), 5)[0])).toEqual([21,22,23,24,25]);
+        expect(fromList(delKthLastFaster(l(), 3)[0])).toEqual([20,21,23,24,25]);
     });
 });
 
