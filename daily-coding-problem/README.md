@@ -140,3 +140,23 @@ For example, given `x = 10` and `lst = [9, 12, 3, 5, 14, 10, 10]`, one partition
 Given the head of a singly linked list, swap every two nodes and return its head.
 
 For example, given `1 -> 2 -> 3 -> 4`, return `2 -> 1 -> 4 -> 3`.
+
+### Problem `#203` - Medium
+
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand. Search for an element in `O(log N)` time. You may assume the array does not contain duplicates.
+
+For example, given `[5, 7, 10, 3, 4]`, and element `3` return `true`.
+
+### Problem `#269` - Easy
+
+You are given an string representing the initial conditions of some dominoes. Each element can take one of three values:
+
+- `L`, meaning the domino has just been pushed to the left,
+- `R`, meaning the domino has just been pushed to the right, or
+- `.`, meaning the domino is standing still.
+
+Determine the orientation of each tile when the dominoes stop falling. Note that if a domino receives a force from the left and right side simultaneously, it will remain upright.
+
+For example, given the string `.L.R....L`, you should return `LL.RRRLLL`.
+
+Given the string `..R...L.L`, you should return `..RR.LLLL`.
