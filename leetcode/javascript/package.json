@@ -1,0 +1,33 @@
+{
+  "name": "javascript-leetcode-solutions",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "watch": "npm run test -- --watch"
+  },
+  "keywords": [],
+  "author": "Lambros Petrou <lambrospetrou@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "husky": "^4.0.0",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "1.19.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,json,md,ts}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
