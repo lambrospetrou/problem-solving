@@ -1,4 +1,9 @@
 const largestSkyline = buildings => {
+    // By adding this building we don't need to special handle the buildings
+    // remaining in our stack after the main loop since they will be taken care of 
+    // because of this short building.
+    buildings.push({height: Number.MIN_VALUE});
+
     // Assumption: Buildings are continuous so give them their left/right automagically!
     for (let i=0; i<buildings.length; i++) {
         buildings[i].left = i;
@@ -27,17 +32,6 @@ const largestSkyline = buildings => {
         }
 
         S.push(b);
-    }
-
-    // Process anything in the stack of buildings
-    while (S.length > 0) {
-        const finishedB = S.pop();
-        // The building we are processing starts at the end of the previously shorter
-        // building or from the beginning.
-        const finishedBStart = S.length > 0 ? S[S.length-1].right : 0;
-        // And it finishes at the end since it's still in the stack.
-        const finishedBArea = finishedB.height * (S.length - finishedBStart);
-        maxArea = Math.max(maxArea, finishedBArea);
     }
 
     return maxArea;
